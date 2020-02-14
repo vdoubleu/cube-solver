@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-im = cv2.imread("rcube4.jpg")
+im = cv2.imread("../images/rcube4.jpg")
 
 #for resize of image
 scale_percent = 20 # percent of original size
