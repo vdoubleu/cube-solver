@@ -2,6 +2,7 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
 import cv2
+import numpy as np
 
 
 def video_capture():
@@ -17,8 +18,8 @@ def video_capture():
         frame = frame.array
         img = edge_detection(frame)
         
-        # cv2.namedWindow('Frame', cv2.WINDOW_NORMAL)
-        # cv2.resizeWindow('Frame', 1500, 1500)
+        cv2.namedWindow('Frame', cv2.WINDOW_NORMAL)
+        cv2.resizeWindow('Frame', 640, 480)
         cv2.imshow('Frame', img)
 
         key = cv2.waitKey(1) & 0xFF
@@ -28,8 +29,6 @@ def video_capture():
         if key == 27:
             break
     
-    cv2.destroyAllWindows()
-
 
 def edge_detection(img):
 
@@ -37,7 +36,7 @@ def edge_detection(img):
     scale = 40
     width = int(img.shape[1] * scale/100)
     height = int(img.shape[0] * scale/100)
-    img = cv2.resize(img, (width, height), interpolation=cv2.INTER_AREA)
+    img = cv2.resize(img, (width, height), cv2.INTER_AREA)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -59,10 +58,10 @@ def edge_detection(img):
 
         area = cv2.contourArea(contours[i])
 
-        if 44000 > area > 30000:
+        if 1000 > area > 200:
             filtered_contours.append(contours[i])
             x,y,w,h = cv2.boundingRect(contours[i])
-            #img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 3)
+            #img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 1)
 
             # mean colour
             mask = np.zeros(img.shape[:2], np.uint8)
@@ -70,10 +69,10 @@ def edge_detection(img):
             mean_colours.append(cv2.mean(img, mask))
 
     # all contours
-    cv2.drawContours(img, contours, -1, (0, 255, 0), 5)
+    # cv2.drawContours(img, contours, -1, (0, 255, 0), 1)
 
     # filtered contours
-    # cv2.drawContours(img, filtered_contours, -1, (0, 255, 0), 5)
+    cv2.drawContours(img, filtered_contours, -1, (0, 255, 0), 1)
     return img
 
 
