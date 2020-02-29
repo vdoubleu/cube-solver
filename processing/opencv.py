@@ -1,4 +1,4 @@
-from picamera.array import PiRGBBArray
+from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
 import cv2
@@ -6,6 +6,8 @@ import cv2
 
 def video_capture():
     camera = PiCamera()
+    camera.resolution = (640, 480)
+    camera.framerate = 32
     rawCapture = PiRGBArray(camera)
 
     time.sleep(0.1)
@@ -15,13 +17,14 @@ def video_capture():
         frame = frame.array
         img = edge_detection(frame)
         
-        cv2.namedWindow('Frame', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('Frame', 1500, 1500)
+        # cv2.namedWindow('Frame', cv2.WINDOW_NORMAL)
+        # cv2.resizeWindow('Frame', 1500, 1500)
         cv2.imshow('Frame', img)
-        
-        rawCapture.truncate(0)
 
         key = cv2.waitKey(1) & 0xFF
+
+        rawCapture.truncate(0)
+        
         if key == 27:
             break
     
