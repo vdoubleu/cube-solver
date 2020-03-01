@@ -3,9 +3,18 @@ from picamera import PiCamera
 import time
 import cv2
 import numpy as np
+import pickle
+
+
+COLOURS = ['Green', 'Orange', 'White', 'Yellow', 'Blue', 'Red']
 
 
 def video_capture():
+
+    # load model
+    model_path = 'cluster_model.sav'
+    model = pickle.load(open(model_path, 'rb'))
+
     camera = PiCamera()
     camera.resolution = (640, 480)
     camera.framerate = 32
@@ -18,8 +27,6 @@ def video_capture():
         frame = frame.array
         img, colours = edge_detection(frame)
 
-        print(colours)
-        
         cv2.namedWindow("Rubik's Cube Solver", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("Rubik's Cube Solver", 640, 480)
         cv2.imshow("Rubik's Cube Solver", img)
@@ -28,7 +35,11 @@ def video_capture():
 
         rawCapture.truncate(0)
         
-        if key == 27:
+        if key == ord('p'):
+            for i in range(len(colours)):
+                print(COLOURS[model.predict(colours[i][:3])[0]])
+
+        elif key == ord('q') or key == 27:
             break
     
 
