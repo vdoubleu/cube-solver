@@ -16,11 +16,13 @@ def video_capture():
     for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
         
         frame = frame.array
-        img = edge_detection(frame)
+        img, colours = edge_detection(frame)
+
+        print(colours)
         
-        cv2.namedWindow('Frame', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('Frame', 640, 480)
-        cv2.imshow('Frame', img)
+        cv2.namedWindow("Rubik's Cube Solver", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("Rubik's Cube Solver", 640, 480)
+        cv2.imshow("Rubik's Cube Solver", img)
 
         key = cv2.waitKey(1) & 0xFF
 
@@ -52,6 +54,8 @@ def edge_detection(img):
     filtered_contours = []
     mean_colours = []
     for i in range(len(contours)):
+
+        # create convex polygon approximation for each contour
         epsilon = 0.01*cv2.arcLength(contours[i], True)
         approx = cv2.approxPolyDP(contours[i], epsilon, True)
         contours[i] = cv2.convexHull(approx)
@@ -60,20 +64,22 @@ def edge_detection(img):
 
         if 1000 > area > 200:
             filtered_contours.append(contours[i])
-            x,y,w,h = cv2.boundingRect(contours[i])
+
+            # bounding rectangle
+            # x,y,w,h = cv2.boundingRect(contours[i])
             #img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 1)
 
             # mean colour
-            mask = np.zeros(img.shape[:2], np.uint8)
-            mask[y:y+h, x:x+w] = 255
-            mean_colours.append(cv2.mean(img, mask))
+            mask = np.zeros(gray.shape, np.uint8)
+            cv2.drawContours(mask, contours[i], -1, 255, -1)
+            mean_colours.append(cv2.mean(img, mask=mask))
 
     # all contours
     # cv2.drawContours(img, contours, -1, (0, 255, 0), 1)
 
     # filtered contours
     cv2.drawContours(img, filtered_contours, -1, (0, 255, 0), 1)
-    return img
+    return img, mean_colours
 
 
 if __name__ == '__main__':
