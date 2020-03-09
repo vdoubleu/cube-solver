@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import time
-from motor_control import rotate, MOTORS
+from stepper_control import rotate, MOTORS
 
 # constants
 QUARTER_TURN = 0.25
