@@ -34,20 +34,20 @@ def setup():
             GPIO.output(pin, False)
 
 # rotate motor
-def rotate(num_rev, **motors):
-    num_steps = num_rev * STEPS_PER_REV
+def rotate(num_rev, motors):
+    num_steps = int(num_rev * STEPS_PER_REV)
 
     for step in range(num_steps):
 
         for i in range(len(SEQUENCE)):
             # direction: 0 = ccw, 1 = cw
-            for motor, direction in motors:
-                for j in range(len(motor)):
-                    GPIO.output(motor[j], SEQUENCE[RANGES[direction][i]][j])
+            for motor in motors:
+                for j in range(len(motor[0])):
+                    GPIO.output(motor[0][j], SEQUENCE[RANGES[motor[1]][i]][j])
 
             time.sleep(DELAY)
 
 
 if __name__ == '__main__':
     setup()
-    rotate_cw(1, motor=True for motor in MOTORS.values()) # one rotation
+    rotate(1, [(motor, True) for motor in MOTORS.values()]) # one rotation
